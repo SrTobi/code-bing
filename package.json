@@ -35,7 +35,13 @@
           "description": "A string to an online search engine. {query} is replaced with the user search."
         }
       }
-    }
+    },
+    "keybindings": [
+      {
+        "command": "codebing.search",
+        "key": "ctrl+alt+F"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
