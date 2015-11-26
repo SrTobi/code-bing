@@ -1,6 +1,6 @@
 {
   "name": "code-bing",
-  "displayName": "code-bing",
+  "displayName": "CodeBing",
   "description": " Extension to search for selected text in the internet.",
   "version": "0.0.1",
   "publisher": "SrTobi",
@@ -11,6 +11,7 @@
   "engines": {
     "vscode": "^0.10.1"
   },
+  "icon": "images/icon.png",
   "categories": [
     "Other"
   ],
