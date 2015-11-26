@@ -15,13 +15,13 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.sayHello"
+		"onCommand:codebing.search"
 	],
 	"main": "./out/src/extension",
 	"contributes": {
 		"commands": [{
-			"command": "extension.sayHello",
-			"title": "Hello World"
+			"command": "codebing.search",
+			"title": "Bing"
 		}]
 	},
 	"scripts": {
