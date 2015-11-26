@@ -49,7 +49,8 @@ function searchfor(query:string) {
 	// Build the query
 	let config = vscode.workspace.getConfiguration("codebing");
 	let searchprovider = config.get("searchprovider") as string;
-	let url = searchprovider.replace("{query}", query);
+	let q = query.replace(/[\r\n]/g, "");
+	let url = searchprovider.replace("{query}", q);
 	
 	open(url);
 }
