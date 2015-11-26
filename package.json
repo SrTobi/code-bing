@@ -1,42 +1,47 @@
 {
-	"name": "code-bing",
-	"displayName": "code-bing",
-	"description": " Extension to search for selected text in the internet.",
-	"version": "0.0.1",
-	"publisher": "SrTobi",
-	"author": {
-		"name": "Tobias Kahlert (a.k.a SrTobi)"
-	},
-	"homepage": "https://github.com/SrTobi/code-bing/",
-	"engines": {
-		"vscode": "^0.10.1"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCommand:codebing.search"
-	],
-	"main": "./out/src/extension",
-	"contributes": {
-		"commands": [{
-			"command": "codebing.search",
-			"title": "Bing"
-		}]
-	},
-	"scripts": {
-		"vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-		"compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/SrTobi/code-bing/"
-	},
-	"bugs": {
-		"url": "https://github.com/SrTobi/code-bing/issues"
-	},
-	"devDependencies": {
-		"typescript": "^1.6.2",
-		"vscode": "0.10.x"
-	}
+  "name": "code-bing",
+  "displayName": "code-bing",
+  "description": " Extension to search for selected text in the internet.",
+  "version": "0.0.1",
+  "publisher": "SrTobi",
+  "author": {
+    "name": "Tobias Kahlert (a.k.a SrTobi)"
+  },
+  "homepage": "https://github.com/SrTobi/code-bing/",
+  "engines": {
+    "vscode": "^0.10.1"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:codebing.search"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codebing.search",
+        "title": "Bing"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+    "compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SrTobi/code-bing/"
+  },
+  "bugs": {
+    "url": "https://github.com/SrTobi/code-bing/issues"
+  },
+  "devDependencies": {
+    "typescript": "^1.6.2",
+    "vscode": "0.10.x"
+  },
+  "dependencies": {
+    "open": "0.0.5"
+  }
 }
