@@ -24,7 +24,18 @@
         "command": "codebing.search",
         "title": "Bing"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "CodeBing Configuration",
+      "type": "object",
+      "properties": {
+        "codebing.searchprovider": {
+          "type": "string",
+          "default": "https://www.bing.com/search?q={query}",
+          "description": "A string to an online search engine. {query} is replaced with the user search."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "node ./node_modules/vscode/bin/compile",

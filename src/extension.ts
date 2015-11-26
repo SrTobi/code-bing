@@ -46,6 +46,10 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function searchfor(query:string) {
-	// For now just show the query.
-	vscode.window.showInformationMessage("Search for: " + query);
+	// Build the query
+	let config = vscode.workspace.getConfiguration("codebing");
+	let searchprovider = config.get("searchprovider") as string;
+	let url = searchprovider.replace("{query}", query);
+	
+	open(url);
 }
