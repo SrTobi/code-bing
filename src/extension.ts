@@ -32,8 +32,8 @@ export function activate(context: vscode.ExtensionContext) {
 		
 		// Show an input box where the user can enter the text he want to search for
 		// In order to do so, setup some options. 
-		let options:vscode.InputBoxOptions = {
-			prompt: "Enter something to search for",	// <- The text to display underneath the input box. 
+		let options: vscode.InputBoxOptions = {
+			prompt: "Enter provider code followed by query",	// <- The text to display underneath the input box. 
 			value: text,								// <- The value to prefill in the input box. Here we use the selected text.
 			placeHolder: "Query"						// <- An optional string to show as place holder in the input box to guide the user what to type.
 		}
@@ -41,16 +41,40 @@ export function activate(context: vscode.ExtensionContext) {
 		// Open the input box. If the user hits enter, 'searchfor' is invoked.
 		vscode.window.showInputBox(options).then(searchfor);
 	});
-	
+
 	context.subscriptions.push(disposable);
 }
 
-function searchfor(query:string) {
+function searchfor(query: string) {
 	// Build the query
 	let config = vscode.workspace.getConfiguration("codebing");
-	let searchprovider = config.get("searchprovider") as string;
-	let q = query.replace(/[\r\n]/g, "");
-	let url = searchprovider.replace("{query}", q);
+	let searchProviders = config.get("searchproviders") as {};
 	
-	open(url);
+	// Backwards compatibility with old config format
+	let oldSearchProvider = config.get("searchprovider") as string
+	console.log(oldSearchProvider)
+	if (oldSearchProvider != null) {
+		searchProviders["defaultSearchProviderID"] = "oldSearchProvider";
+		searchProviders["oldSearchProvider"] = oldSearchProvider;
+	}
+	
+	// Get the first word to use as the search provider ID
+	let searchProviderID = query.split(' ', 1)[0];
+	// Retrieve the search provider based on the ID
+	let searchProvider = searchProviders[searchProviderID]
+	let q = "" // Query variable
+	// Use default provider if none was specified.
+	if (searchProvider == null) {
+		searchProvider = searchProviders[searchProviders["defaultSearchProviderID"]]
+		q = query
+	} else {
+		q = query.substr(searchProviderID.length + 1) // Remove provider ID from query
+	}
+	if (searchProvider == null) { // Still null? Something is not setup right.
+		vscode.window.showErrorMessage("Error resolving provider! No providers or no default set.")
+	} else {
+		q = q.replace(/[\r\n]/g, "");
+		let url = searchProvider.replace("{query}", q);
+		open(url);
+	}
 }
