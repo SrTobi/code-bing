@@ -35,7 +35,7 @@
           "type": "object",
           "description": "A string to an online search engine. {query} is replaced with the user search. First word is used as selecter (b or g by default).",
           "default": {
-            "defaultSearchProviderID": "g",
+            "defaultSearchProviderID": "b",
             "b": "https://www.bing.com/search?q={query}",
             "g": "https://www.google.com/search?q={query}",
             "yh": "https://search.yahoo.com/search?p={query}",
