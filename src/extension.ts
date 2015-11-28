@@ -49,6 +49,7 @@ function searchfor(query: string) {
 	// Build the query
 	let config = vscode.workspace.getConfiguration("codebing");
 	let searchProviders = config.get("searchproviders") as {};
+	let defaultOnly = config.get("defaultprovideronly") as string;
 	
 	// Backwards compatibility with old config format
 	let oldSearchProvider = config.get("searchprovider") as string
@@ -64,7 +65,7 @@ function searchfor(query: string) {
 	let searchProvider = searchProviders[searchProviderID]
 	let q = "" // Query variable
 	// Use default provider if none was specified.
-	if (searchProvider == null) {
+	if (searchProvider == null || defaultOnly) {
 		searchProvider = searchProviders[searchProviders["defaultSearchProviderID"]]
 		q = query
 	} else {

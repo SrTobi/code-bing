@@ -39,6 +39,12 @@
             "b": "https://www.bing.com/search?q={query}",
             "g": "https://www.google.com/search?q={query}"
           }
+        },
+        "codebing.defaultprovideronly":{
+          "title": "Default provider only",
+          "type": "boolean",
+          "description": "If true, only the default search provider will be used.",
+          "default": false
         }
       }
     },
