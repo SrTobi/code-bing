@@ -57,40 +57,40 @@ function getSearchUrl(query: string) {
 	let providerID = query.split(' ', 1)[0];
 	
 	// Backwards compatibility with old config format
-	let oldSearchProvider = config.get("searchprovider") as string
+	let oldSearchProvider = config.get("searchprovider") as string;
 	if (oldSearchProvider != null) {
-		defaultProvider = oldSearchProvider
+		defaultProvider = oldSearchProvider;
 	}
 	
 	// Select the search provider
-	let selectedProvider = ""
-	let isDefault = false
+	let selectedProvider = "";
+	let isDefault = false;
 	// Return default only if specified in config.
 	if (useDefaultOnly) {
-		selectedProvider = defaultProvider
-		isDefault = true
+		selectedProvider = defaultProvider;
+		isDefault = true;
 	} else { // If not then try to resolve ID
-		let searchProvider = searchProviders[providerID]
+		let searchProvider = searchProviders[providerID];
 		if (searchProvider != null) {
-			selectedProvider = searchProvider
+			selectedProvider = searchProvider;
 		} else { // If none is found based on ID then use default.
-			selectedProvider = defaultProvider
-			isDefault = true
+			selectedProvider = defaultProvider;
+			isDefault = true;
 		}
 	}
-	let searchUrl = selectedProvider
-	let q = ""
+	let searchUrl = selectedProvider;
+	let q = "";
 	if (!isDefault) {
 		// If not using default then strip away the provider ID from query
-		q = query.substr(providerID.length + 1)
+		q = query.substr(providerID.length + 1);
 	} else {
-		q = query
+		q = query;
 	}
 	// Insert query and strip out invalid characters.
-	searchUrl = searchUrl.replace("{query}", q).replace(/[\r\n]/g, "")
-	return searchUrl
+	searchUrl = searchUrl.replace("{query}", q).replace(/[\r\n]/g, "");
+	return searchUrl;
 }
 
 function searchFor(query: string) {
-	open(getSearchUrl(query))
+	open(getSearchUrl(query));
 }
