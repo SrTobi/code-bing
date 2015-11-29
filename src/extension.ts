@@ -51,13 +51,13 @@ export function activate(context: vscode.ExtensionContext) {
 function getSearchUrl(query: string) {
 	// Get config stuff
 	let config = vscode.workspace.getConfiguration("codebing");
-	let searchProviders = config.get("searchProviders") as {};
-	let useDefaultOnly = config.get("useDefaultProviderOnly") as boolean;
-	let defaultProvider = config.get("defaultProvider") as string;
+	let searchProviders = config.get("searchProviders") as { [id: string]: string; };
+	let useDefaultOnly = config.get<boolean>("useDefaultProviderOnly");
+	let defaultProvider = config.get<string>("defaultProvider");
 	let providerID = query.split(' ', 1)[0];
 	
 	// Backwards compatibility with old config format
-	let oldSearchProvider = config.get("searchprovider") as string;
+	let oldSearchProvider = config.get<string>("searchprovider");
 	if (oldSearchProvider != null) {
 		defaultProvider = oldSearchProvider;
 	}
