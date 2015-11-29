@@ -32,25 +32,65 @@ export function activate(context: vscode.ExtensionContext) {
 		
 		// Show an input box where the user can enter the text he want to search for
 		// In order to do so, setup some options. 
-		let options:vscode.InputBoxOptions = {
-			prompt: "Enter something to search for",	// <- The text to display underneath the input box. 
+		let options: vscode.InputBoxOptions = {
+			prompt: "Enter provider code followed by query",	// <- The text to display underneath the input box. 
 			value: text,								// <- The value to prefill in the input box. Here we use the selected text.
 			placeHolder: "Query"						// <- An optional string to show as place holder in the input box to guide the user what to type.
 		}
 		
 		// Open the input box. If the user hits enter, 'searchfor' is invoked.
-		vscode.window.showInputBox(options).then(searchfor);
+		vscode.window.showInputBox(options).then(searchFor);
 	});
-	
+
 	context.subscriptions.push(disposable);
 }
 
-function searchfor(query:string) {
-	// Build the query
+// Returns the url of the search provider with the query.
+//
+// @return the search url with query
+function getSearchUrl(query: string) {
+	// Get config stuff
 	let config = vscode.workspace.getConfiguration("codebing");
-	let searchprovider = config.get("searchprovider") as string;
-	let q = query.replace(/[\r\n]/g, "");
-	let url = searchprovider.replace("{query}", q);
+	let searchProviders = config.get("searchProviders") as { [id: string]: string; };
+	let useDefaultOnly = config.get<boolean>("useDefaultProviderOnly");
+	let defaultProvider = config.get<string>("defaultProvider");
+	let providerID = query.split(' ', 1)[0];
 	
-	open(url);
+	// Backwards compatibility with old config format
+	let oldSearchProvider = config.get<string>("searchprovider");
+	if (oldSearchProvider != null) {
+		defaultProvider = oldSearchProvider;
+	}
+	
+	// Select the search provider
+	let selectedProvider = "";
+	let isDefault = false;
+	// Return default only if specified in config.
+	if (useDefaultOnly) {
+		selectedProvider = defaultProvider;
+		isDefault = true;
+	} else { // If not then try to resolve ID
+		let searchProvider = searchProviders[providerID];
+		if (searchProvider != null) {
+			selectedProvider = searchProvider;
+		} else { // If none is found based on ID then use default.
+			selectedProvider = defaultProvider;
+			isDefault = true;
+		}
+	}
+	let searchUrl = selectedProvider;
+	let q = "";
+	if (!isDefault) {
+		// If not using default then strip away the provider ID from query
+		q = query.substr(providerID.length + 1);
+	} else {
+		q = query;
+	}
+	// Insert query and strip out invalid characters.
+	searchUrl = searchUrl.replace("{query}", q).replace(/[\r\n]/g, "");
+	return searchUrl;
+}
+
+function searchFor(query: string) {
+	open(getSearchUrl(query));
 }

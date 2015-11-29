@@ -2,7 +2,7 @@
   "name": "code-bing",
   "displayName": "CodeBing",
   "description": " Extension to search for selected text in the internet.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "SirTobi",
   "author": {
     "name": "Tobias Kahlert (a.k.a SirTobi)"
@@ -30,10 +30,32 @@
       "title": "CodeBing Configuration",
       "type": "object",
       "properties": {
-        "codebing.searchprovider": {
+        "codebing.searchProviders": {
+          "title": "Search providers",
+          "type": "object",
+          "description": "A dictionary with search engines, mapping a key to a search url. In the search url {query} is replaced with the user search. Use the key as first word in the search input to specify the search engine.",
+          "default": {
+            "b": "https://www.bing.com/search?q={query}",
+            "g": "https://www.google.com/search?q={query}",
+            "yh": "https://search.yahoo.com/search?p={query}",
+            "ddg": "https://duckduckgo.com/?q={query}",
+            "wiki": "https://en.wikipedia.org/wiki/{query}",
+            "yt": "https://www.youtube.com/results?search_query={query}",
+            "twit": "https://twitter.com/search?q={query}",
+            "gh": "https://github.com/search?utf8=✓&q={query}"
+          }
+        },
+        "codebing.useDefaultProviderOnly": {
+          "title": "Use default search provider only.",
+          "type": "boolean",
+          "description": "If true, only the default search provider will be used.",
+          "default": false
+        },
+        "codebing.defaultProvider": {
+          "title": "Default search provider",
           "type": "string",
-          "default": "https://www.bing.com/search?q={query}",
-          "description": "A string to an online search engine. {query} is replaced with the user search."
+          "description": "A string containing a search engine. In the search url {query} is replaced with the user search.",
+          "default": "https://www.bing.com/search?q={query}"
         }
       }
     },
