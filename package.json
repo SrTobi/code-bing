@@ -30,12 +30,11 @@
       "title": "CodeBing Configuration",
       "type": "object",
       "properties": {
-        "codebing.searchproviders": {
+        "codebing.searchProviders": {
           "title": "Search providers",
           "type": "object",
-          "description": "A string to an online search engine. {query} is replaced with the user search. First word is used as selecter (b or g by default).",
+          "description": "A dictionary with search engines, mapping a key to a search url. In the search url {query} is replaced with the user search. Use the key as first word in the search input to specify the search engine.",
           "default": {
-            "defaultSearchProviderID": "b",
             "b": "https://www.bing.com/search?q={query}",
             "g": "https://www.google.com/search?q={query}",
             "yh": "https://search.yahoo.com/search?p={query}",
@@ -46,11 +45,17 @@
             "gh": "https://github.com/search?utf8=✓&q={query}"
           }
         },
-        "codebing.defaultprovideronly":{
-          "title": "Default provider only",
+        "codebing.useDefaultProviderOnly": {
+          "title": "Use default search provider only.",
           "type": "boolean",
           "description": "If true, only the default search provider will be used.",
           "default": false
+        },
+        "codebing.defaultProvider": {
+          "title": "Default search provider",
+          "type": "string",
+          "description": "A string containing a search engine. In the search url {query} is replaced with the user search.",
+          "default": "https://www.bing.com/search?q={query}"
         }
       }
     },
