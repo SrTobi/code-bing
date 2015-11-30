@@ -47,7 +47,10 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 	context.subscriptions.push(disposable);
-
+	
+	// check configuration every time the user changes it.
+	disposable = vscode.workspace.onDidChangeConfiguration(validateConfig);
+	context.subscriptions.push(disposable);
 }
 
 // Returns the url of the search provider with the query.
