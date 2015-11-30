@@ -98,5 +98,10 @@ function getSearchUrl(query: string) {
 }
 
 function searchFor(query: string) {
+	// check if input was dismissed
+	if (!query) {
+		return;
+	}
+	
 	open(getSearchUrl(query));
 }
