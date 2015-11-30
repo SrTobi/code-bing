@@ -1,4 +1,6 @@
 # code-bing
+
+[![Join the chat at https://gitter.im/SrTobi/code-bing](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/SrTobi/code-bing?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 A Visual Studio Code Extension to search the selected text with your favorite search engine.
 
 ## How it works
