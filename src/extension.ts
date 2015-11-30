@@ -22,13 +22,13 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// Get the active editor
 		let editor = vscode.window.activeTextEditor;
-		if (!editor) {
-			return; // No open text editor
+		let text = "";
+		if (editor) {
+			// Get the selected text
+			let selection = editor.selection;
+			text = editor.document.getText(selection);
 		}
 		
-		// Get the selected text
-		let selection = editor.selection;
-		let text = editor.document.getText(selection);
 
 		let config = vscode.workspace.getConfiguration("codebing");
 		if (!utils.isNullOrEmpty(text) && config.get<boolean>("noInputBoxIfTextSelected")) {
