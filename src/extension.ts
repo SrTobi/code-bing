@@ -80,13 +80,18 @@ function getSearchUrl(query: string) {
 		if (searchProvider != null) {
 			selectedProvider = searchProvider;
 		} else { // If none is found based on ID then use default.
-			selectedProvider = defaultProvider;
-			if (!isValidProviderUrl(selectedProvider, false)) {
-				selectedProvider = searchProviders[defaultProvider]
+			selectedProvider = searchProviders[defaultProvider];
+			if (!selectedProvider) {
+				selectedProvider = defaultProvider;
 			}
 			isDefault = true;
 		}
 	}
+	
+	if (!isValidProviderUrl(selectedProvider, false)) {
+		showConfigWarning("Selected provider is not valid: '" + selectedProvider + "'");
+	}
+	
 	let searchUrl = selectedProvider;
 	let q = "";
 	if (!isDefault) {
@@ -112,28 +117,28 @@ function validateConfig() {
 	let config = vscode.workspace.getConfiguration("codebing");
 	let searchProviders = config.get("searchProviders") as { [id: string]: string; };
 	let defaultProvider = config.get<string>("defaultProvider");
-	let invalidProviders: Array<string> = []
+	let invalidProviders: Array<string> = [];
 
 	// Validate searchProviders
 	for (let key in searchProviders) {
 		if (searchProviders.hasOwnProperty(key)) {
 			if (!isValidProviderUrl(searchProviders[key])) {
-				invalidProviders.push(key)
+				invalidProviders.push(key);
 			}
 		}
 	}
 	// Validate defaultProvider
 	if (!isValidProviderUrl(defaultProvider, true)
 		&& !isValidProviderUrl(searchProviders[defaultProvider])) {
-		invalidProviders.push("defaultProvider: " + defaultProvider)
+		invalidProviders.push("defaultProvider: '" + defaultProvider + "'");
 	}
 
 	if ((invalidProviders != null) && (invalidProviders.length > 0)) {
-		let msg = "Invalid searchProviders: "
+		let msg = "Invalid searchProviders: ";
 		invalidProviders.forEach(provider => {
-			msg += provider + ", "
+			msg += "'" + provider + "', ";
 		});
-		showConfigWarning(msg.substr(0, msg.length - 2))
+		showConfigWarning(msg.substr(0, msg.length - 2));
 	}
 }
 
@@ -142,65 +147,10 @@ function isValidProviderUrl(url: string, regexValidation = true) {
 	let isValid = ((url != null) && (url.indexOf("{query}") > -1))
 
 	if (regexValidation && isValid) {
-		let regex = /^http(s)?:\/\/(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/
-		isValid = regex.test(url.replace("{query}", ""))
+		let regex = /^http(s)?:\/\/(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+		isValid = regex.test(url.replace("{query}", ""));
 	}
-	return isValid
-}
-
-function showConfigWarning(warning: string) {
-	interface CmdItem extends vscode.MessageItem { cmd: string };
-	let openGlobalSettings: CmdItem = { title: "Open global settings", cmd: "workbench.action.openGlobalSettings" };
-	let openWorkspaceSettings: CmdItem = { title: "Open workspace settings", cmd: "workbench.action.openWorkspaceSettings" };
-	// Only show "Open workspace settings" if a folder is open
-	(vscode.workspace.rootPath == undefined
-		? vscode.window.showWarningMessage(warning, openGlobalSettings)
-		: vscode.window.showWarningMessage(warning, openGlobalSettings, openWorkspaceSettings))
-		.then((c) => {
-			if (c)
-				vscode.commands.executeCommand(c.cmd);
-		});
-}
-
-// Validate config to ensure all urls work etc.
-function validateConfig() {
-	let config = vscode.workspace.getConfiguration("codebing");
-	let searchProviders = config.get("searchProviders") as { [id: string]: string; };
-	let defaultProvider = config.get<string>("defaultProvider");
-	let invalidProviders: Array<string> = []
-
-	// Validate searchProviders
-	for (let key in searchProviders) {
-		if (searchProviders.hasOwnProperty(key)) {
-			if (!isValidProviderUrl(searchProviders[key])) {
-				invalidProviders.push(key)
-			}
-		}
-	}
-	// Validate defaultProvider
-	if (!isValidProviderUrl(defaultProvider, true)
-		&& !isValidProviderUrl(searchProviders[defaultProvider])) {
-		invalidProviders.push("defaultProvider: " + defaultProvider)
-	}
-
-	if ((invalidProviders != null) && (invalidProviders.length > 0)) {
-		let msg = "Invalid searchProviders: "
-		invalidProviders.forEach(provider => {
-			msg += provider + ", "
-		});
-		showConfigError(msg.substr(0, msg.length - 2))
-	}
-}
-
-function isValidProviderUrl(url: string, regexValidation = true) {
-
-	let isValid = ((url != null) && (url.indexOf("{query}") > -1))
-
-	if (regexValidation && isValid) {
-		let regex = /^http(s)?:\/\/(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/
-		isValid = regex.test(url.replace("{query}", ""))
-	}
-	return isValid
+	return isValid;
 }
 
 function showConfigWarning(warning: string) {
