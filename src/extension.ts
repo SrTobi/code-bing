@@ -5,6 +5,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import open = require('open');
+import * as utils from './utils';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -29,17 +30,22 @@ export function activate(context: vscode.ExtensionContext) {
 		// Get the selected text
 		let selection = editor.selection;
 		let text = editor.document.getText(selection);
-		
-		// Show an input box where the user can enter the text he want to search for
-		// In order to do so, setup some options. 
-		let options: vscode.InputBoxOptions = {
-			prompt: "Enter provider code followed by query",	// <- The text to display underneath the input box. 
-			value: text,								// <- The value to prefill in the input box. Here we use the selected text.
-			placeHolder: "Query"						// <- An optional string to show as place holder in the input box to guide the user what to type.
+
+		let config = vscode.workspace.getConfiguration("codebing");
+		if (!utils.isNullOrEmpty(text) && config.get<boolean>("noInputBoxIfTextSelected")) {
+			searchFor(text);
+		} else {
+			// Show an input box where the user can enter the text he want to search for
+			// In order to do so, setup some options. 
+			let options: vscode.InputBoxOptions = {
+				prompt: "Enter provider code followed by query",	// <- The text to display underneath the input box. 
+				value: text,								// <- The value to prefill in the input box. Here we use the selected text.
+				placeHolder: "Query"						// <- An optional string to show as place holder in the input box to guide the user what to type.
+			}
+			
+			// Open the input box. If the user hits enter, 'searchfor' is invoked.
+			vscode.window.showInputBox(options).then(searchFor);
 		}
-		
-		// Open the input box. If the user hits enter, 'searchfor' is invoked.
-		vscode.window.showInputBox(options).then(searchFor);
 	});
 
 	context.subscriptions.push(disposable);
