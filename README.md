@@ -20,3 +20,10 @@ Yahoo:          https://search.yahoo.com/search?p={query}
 ```
 
 ![Setting a search engine](/images/settings.png?raw=true)
+
+## Contributing
+
+Feel free to contribute to this extension. Please read the [CONTRIBUTING.md](/CONTRIBUTING.md). The following people contributed to this extension:
+
+- [SrTobi](https://github.com/SrTobi)
+- [jacobhands](https://github.com/jacobhands)
