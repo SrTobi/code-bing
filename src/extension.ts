@@ -32,7 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		let config = vscode.workspace.getConfiguration("codebing");
 		if (!utils.isNullOrEmpty(text) && config.get<boolean>("noInputBoxIfTextSelected")) {
-			searchFor(text);
+			searchFor(text, text);
 		} else {
 			// Show an input box where the user can enter the text he want to search for
 			// In order to do so, setup some options. 
@@ -43,7 +43,7 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 			
 			// Open the input box. If the user hits enter, 'searchfor' is invoked.
-			vscode.window.showInputBox(options).then(searchFor);
+			vscode.window.showInputBox(options).then((q) => searchFor(q, text));
 		}
 	});
 	context.subscriptions.push(disposable);
@@ -56,7 +56,7 @@ export function activate(context: vscode.ExtensionContext) {
 // Returns the url of the search provider with the query.
 //
 // @return the search url with query
-function getSearchUrl(query: string) {
+function getSearchUrl(query: string, queryIsSelectedText: boolean) {
 	// Get config stuff
 	let config = vscode.workspace.getConfiguration("codebing");
 	let searchProviders = config.get("searchProviders") as { [id: string]: string; };
@@ -75,7 +75,7 @@ function getSearchUrl(query: string) {
 	let selectedProvider = "";
 	let isDefault = false;
 	// Return default only if specified in config.
-	if (useDefaultOnly) {
+	if (useDefaultOnly || queryIsSelectedText) {
 		isDefault = true;
 	} else { // If not then try to resolve ID
 		let searchProvider = searchProviders[providerID];
@@ -111,11 +111,11 @@ function getSearchUrl(query: string) {
 	return searchUrl;
 }
 
-function searchFor(query: string) {
+function searchFor(query: string, selectedText: string) {
 	if (!query) {
 		return;
 	}
-	open(getSearchUrl(query));
+	open(getSearchUrl(query, query.indexOf(selectedText) == 0));
 }
 
 // Validate config to ensure all urls work etc.
