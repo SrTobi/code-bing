@@ -54,8 +54,8 @@
         "codebing.defaultProvider": {
           "title": "Default search provider",
           "type": "string",
-          "description": "A string containing a search engine. In the search url {query} is replaced with the user search.",
-          "default": "https://www.bing.com/search?q={query}"
+          "description": "A string containing a search engine (or key from searchProviders). In the search url {query} is replaced with the user search.",
+          "default": "b"
         },
         "codebing.noInputBoxIfTextSelected": {
           "title": "No input box if text is selected",

@@ -10,11 +10,10 @@ import * as utils from './utils';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-
+	validateConfig();
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "code-bing" is now active!'); 
-
+	console.log('Congratulations, your extension "code-bing" is now active!');
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with  registerCommand
 	// The commandId parameter must match the command field in package.json
@@ -47,7 +46,10 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.window.showInputBox(options).then(searchFor);
 		}
 	});
-
+	context.subscriptions.push(disposable);
+	
+	// check configuration every time the user changes it.
+	disposable = vscode.workspace.onDidChangeConfiguration(validateConfig);
 	context.subscriptions.push(disposable);
 }
 
@@ -66,6 +68,7 @@ function getSearchUrl(query: string) {
 	let oldSearchProvider = config.get<string>("searchprovider");
 	if (oldSearchProvider != null) {
 		defaultProvider = oldSearchProvider;
+        showConfigWarning("codebing.searchprovider is depricated!")
 	}
 	
 	// Select the search provider
@@ -80,10 +83,18 @@ function getSearchUrl(query: string) {
 		if (searchProvider != null) {
 			selectedProvider = searchProvider;
 		} else { // If none is found based on ID then use default.
-			selectedProvider = defaultProvider;
+			selectedProvider = searchProviders[defaultProvider];
+			if (!selectedProvider) {
+				selectedProvider = defaultProvider;
+			}
 			isDefault = true;
 		}
 	}
+	
+	if (!isValidProviderUrl(selectedProvider, false)) {
+		showConfigWarning("Selected provider is not valid: '" + selectedProvider + "'");
+	}
+	
 	let searchUrl = selectedProvider;
 	let q = "";
 	if (!isDefault) {
@@ -98,5 +109,63 @@ function getSearchUrl(query: string) {
 }
 
 function searchFor(query: string) {
+	if (!query) {
+		return;
+	}
 	open(getSearchUrl(query));
+}
+
+// Validate config to ensure all urls work etc.
+function validateConfig() {
+	let config = vscode.workspace.getConfiguration("codebing");
+	let searchProviders = config.get("searchProviders") as { [id: string]: string; };
+	let defaultProvider = config.get<string>("defaultProvider");
+	let invalidProviders: Array<string> = [];
+
+	// Validate searchProviders
+	for (let key in searchProviders) {
+		if (searchProviders.hasOwnProperty(key)) {
+			if (!isValidProviderUrl(searchProviders[key])) {
+				invalidProviders.push(key);
+			}
+		}
+	}
+	// Validate defaultProvider
+	if (!isValidProviderUrl(defaultProvider, true)
+		&& !isValidProviderUrl(searchProviders[defaultProvider])) {
+		invalidProviders.push("defaultProvider: '" + defaultProvider + "'");
+	}
+
+	if ((invalidProviders != null) && (invalidProviders.length > 0)) {
+		let msg = "Invalid searchProviders: ";
+		invalidProviders.forEach(provider => {
+			msg += "'" + provider + "', ";
+		});
+		showConfigWarning(msg.substr(0, msg.length - 2));
+	}
+}
+
+function isValidProviderUrl(url: string, regexValidation = true) {
+
+	let isValid = ((url != null) && (url.indexOf("{query}") > -1))
+
+	if (regexValidation && isValid) {
+		let regex = /^http(s)?:\/\/(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+		isValid = regex.test(url.replace("{query}", ""));
+	}
+	return isValid;
+}
+
+function showConfigWarning(warning: string) {
+	interface CmdItem extends vscode.MessageItem { cmd: string };
+	let openGlobalSettings: CmdItem = { title: "Open global settings", cmd: "workbench.action.openGlobalSettings" };
+	let openWorkspaceSettings: CmdItem = { title: "Open workspace settings", cmd: "workbench.action.openWorkspaceSettings" };
+	// Only show "Open workspace settings" if a folder is open
+	(vscode.workspace.rootPath == undefined
+		? vscode.window.showWarningMessage(warning, openGlobalSettings)
+		: vscode.window.showWarningMessage(warning, openGlobalSettings, openWorkspaceSettings))
+		.then((c) => {
+			if (c)
+				vscode.commands.executeCommand(c.cmd);
+		});
 }
