@@ -76,18 +76,21 @@ function getSearchUrl(query: string) {
 	let isDefault = false;
 	// Return default only if specified in config.
 	if (useDefaultOnly) {
-		selectedProvider = defaultProvider;
 		isDefault = true;
 	} else { // If not then try to resolve ID
 		let searchProvider = searchProviders[providerID];
-		if (searchProvider != null) {
+		if (searchProvider) {
 			selectedProvider = searchProvider;
 		} else { // If none is found based on ID then use default.
-			selectedProvider = searchProviders[defaultProvider];
-			if (!selectedProvider) {
-				selectedProvider = defaultProvider;
-			}
 			isDefault = true;
+		}
+	}
+	
+	if (isDefault) {
+		// if default resolve defaultProvider
+		selectedProvider = searchProviders[defaultProvider]
+		if (!selectedProvider) {
+			selectedProvider = defaultProvider;
 		}
 	}
 	
@@ -147,7 +150,7 @@ function validateConfig() {
 
 function isValidProviderUrl(url: string, regexValidation = true) {
 
-	let isValid = ((url != null) && (url.indexOf("{query}") > -1))
+	let isValid = ((url != null) && (url.indexOf("{query}") >= 0))
 
 	if (regexValidation && isValid) {
 		let regex = /^http(s)?:\/\/(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
