@@ -31,17 +31,23 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 		let config = vscode.workspace.getConfiguration("codebing");
-		if (!utils.isNullOrEmpty(text) && config.get<boolean>("noInputBoxIfTextSelected")) {
-			searchFor(text, true);
+		// In order to do so, setup some options. 
+		let options: vscode.InputBoxOptions = {
+			prompt: "Enter provider code followed by query",	// <- The text to display underneath the input box. 
+			value: text,								// <- The value to prefill in the input box. Here we use the selected text.
+			placeHolder: "Query"						// <- An optional string to show as place holder in the input box to guide the user what to type.
+		}
+		if (!utils.isNullOrEmpty(text)) {
+			if (config.get<boolean>("noInputBoxIfTextSelected")) {
+				searchDefaultFor(text);
+			} else if (config.get<boolean>("alwaysUseDefaultForSelection")) {
+				vscode.window.showInputBox(options).then(searchDefaultFor);
+			} else {
+				// Open the input box. If the user hits enter, 'searchFor' is invoked.
+				vscode.window.showInputBox(options).then(searchFor);
+			}
 		} else {
 			// Show an input box where the user can enter the text he want to search for
-			// In order to do so, setup some options. 
-			let options: vscode.InputBoxOptions = {
-				prompt: "Enter provider code followed by query",	// <- The text to display underneath the input box. 
-				value: text,								// <- The value to prefill in the input box. Here we use the selected text.
-				placeHolder: "Query"						// <- An optional string to show as place holder in the input box to guide the user what to type.
-			}
-			
 			// Open the input box. If the user hits enter, 'searchfor' is invoked.
 			vscode.window.showInputBox(options).then(searchFor);
 		}
@@ -111,11 +117,17 @@ function getSearchUrl(query: string, forceDefault = false) {
 	return searchUrl;
 }
 
-function searchFor(query: string, forceDefault = false) {
+function searchFor(query: string) {
 	if (!query) {
 		return;
 	}
-	open(getSearchUrl(query, forceDefault));
+	open(getSearchUrl(query));
+}
+function searchDefaultFor(query: string) {
+	if (!query) {
+		return;
+	}
+	open(getSearchUrl(query, true))
 }
 
 // Validate config to ensure all urls work etc.
