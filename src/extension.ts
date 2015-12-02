@@ -22,33 +22,33 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// Get the active editor
 		let editor = vscode.window.activeTextEditor;
-		let text = "";
+		let selectedText = "";
 		if (editor) {
 			// Get the selected text
 			let selection = editor.selection;
-			text = editor.document.getText(selection);
+			selectedText = editor.document.getText(selection);
 		}
-
 		// Get config settings
 		let config = vscode.workspace.getConfiguration("codebing");
 		let useDefaultOnly = config.get<boolean>("useDefaultProviderOnly")
 		let useDefaultForSelection = config.get<boolean>("alwaysUseDefaultForSelection")
 		let skipInputForSelection = config.get<boolean>("noInputBoxIfTextSelected")
 
-		if (!utils.isNullOrEmpty(text) && skipInputForSelection) {
-			searchDefaultFor(text);
+		if (!utils.isNullOrEmpty(selectedText) && skipInputForSelection) {
+			searchFor(selectedText, true);
 		} else {
-			let searchFunc = searchFor
-			if (useDefaultOnly || (!utils.isNullOrEmpty(text) && useDefaultForSelection)) {
-				searchFunc = searchDefaultFor;
+			if (!utils.isNullOrEmpty(selectedText) && useDefaultForSelection) {
+				useDefaultOnly = true
 			}
 			// In order to do so, setup some options. 
 			let options: vscode.InputBoxOptions = {
 				prompt: "Enter provider code followed by query",	// <- The text to display underneath the input box. 
-				value: text,								// <- The value to prefill in the input box. Here we use the selected text.
-				placeHolder: "Query"						// <- An optional string to show as place holder in the input box to guide the user what to type.
+				value: selectedText,								// <- The value to prefill in the input box. Here we use the selected text.
+				placeHolder: "Query"								// <- An optional string to show as place holder in the input box to guide the user what to type.
 			}
-			vscode.window.showInputBox(options).then(searchFunc);
+			vscode.window.showInputBox(options).then((q) =>
+				searchFor(q, (useDefaultOnly || utils.startsWith(q, selectedText)))
+			);
 		}
 	});
 	context.subscriptions.push(disposable);
@@ -115,17 +115,11 @@ function getSearchUrl(query: string, useDefault = false) {
 	return searchUrl;
 }
 
-function searchFor(query: string) {
+function searchFor(query: string, useDefault = false) {
 	if (!query) {
 		return;
 	}
-	open(getSearchUrl(query));
-}
-function searchDefaultFor(query: string) {
-	if (!query) {
-		return;
-	}
-	open(getSearchUrl(query, true))
+	open(getSearchUrl(query, useDefault));
 }
 
 // Validate config to ensure all urls work etc.
