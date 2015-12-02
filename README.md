@@ -13,6 +13,8 @@ This will bring up an input box containing your selection (by default.)
 
 Specify the search engine you want to use with fully customizable shortcuts in the search box.
 
+![Shortcut preview](/images/shortcuts.gif?raw=true)
+
 ## Set your favorite search engine
 
 You can change the search engine in your settings by setting the `codebing.defaultProvider` option to one of your search engine shortcuts or to a new query string.
