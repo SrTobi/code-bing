@@ -31,25 +31,20 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 		let config = vscode.workspace.getConfiguration("codebing");
-		// In order to do so, setup some options. 
-		let options: vscode.InputBoxOptions = {
-			prompt: "Enter provider code followed by query",	// <- The text to display underneath the input box. 
-			value: text,								// <- The value to prefill in the input box. Here we use the selected text.
-			placeHolder: "Query"						// <- An optional string to show as place holder in the input box to guide the user what to type.
-		}
-		if (!utils.isNullOrEmpty(text)) {
-			if (config.get<boolean>("noInputBoxIfTextSelected")) {
-				searchDefaultFor(text);
-			} else if (config.get<boolean>("alwaysUseDefaultForSelection")) {
-				vscode.window.showInputBox(options).then(searchDefaultFor);
-			} else {
-				// Open the input box. If the user hits enter, 'searchFor' is invoked.
-				vscode.window.showInputBox(options).then(searchFor);
-			}
+		if (!utils.isNullOrEmpty(text) && config.get<boolean>("noInputBoxIfTextSelected")) {
+			searchDefaultFor(text);
 		} else {
-			// Show an input box where the user can enter the text he want to search for
-			// Open the input box. If the user hits enter, 'searchfor' is invoked.
-			vscode.window.showInputBox(options).then(searchFor);
+			let searchFunc = searchFor
+			if (!utils.isNullOrEmpty(text) && config.get<boolean>("alwaysUseDefaultForSelection")) {
+				searchFunc = searchDefaultFor;
+			}
+			// In order to do so, setup some options. 
+			let options: vscode.InputBoxOptions = {
+				prompt: "Enter provider code followed by query",	// <- The text to display underneath the input box. 
+				value: text,								// <- The value to prefill in the input box. Here we use the selected text.
+				placeHolder: "Query"						// <- An optional string to show as place holder in the input box to guide the user what to type.
+			}
+			vscode.window.showInputBox(options).then(searchFunc);
 		}
 	});
 	context.subscriptions.push(disposable);
