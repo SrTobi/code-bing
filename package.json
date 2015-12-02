@@ -2,7 +2,7 @@
   "name": "code-bing",
   "displayName": "CodeBing",
   "description": " Extension to search for selected text in the internet.",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "publisher": "SirTobi",
   "author": {
     "name": "Tobias Kahlert (a.k.a SirTobi)"
