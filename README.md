@@ -2,12 +2,12 @@
 
 [![Join the chat at https://gitter.im/SrTobi/code-bing](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/SrTobi/code-bing?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-A Visual Studio Code Extension to search the selected text with your favorite search engine.
+A Visual Studio Code Extension to search selected text (or anything) with your favorite search engine.
 
 ## How it works
 
 Press `ctrl+alt+f` or use the `Bing` command to search the selected text.
-You can also enter the text, that you want to search.
+This will bring up an input box containing your selection (by default.)
 
 ![Preview](/images/preview.gif?raw=true)
 
@@ -29,10 +29,10 @@ In the next input box enter `code-bing` and wait for the installer to find CodeB
 
 ![Installation](/images/install.png)
 
-## Other setting
+## Other Settings
 
 You can define the list of search providers and their shortcuts in the `codebing.searchProviders` option.
-__Note__ that setting this option will remove all default search providers.
+__Note__ that setting this option will overwrite these defaults.
 
 ```
  "codebing.searchProviders": {
@@ -53,7 +53,7 @@ If you do not want to use shortcuts, set `codebing.useDefaultProviderOnly` to `t
 "codebing.useDefaultProviderOnly": true
 ```
 
-Set `codebing.noInputBoxIfTextSelected` to `true` to skip the inputbox if you have selected text:
+Set `codebing.noInputBoxIfTextSelected` to `true` to skip input when searching selection:
 
 ```
 "codebing.noInputBoxIfTextSelected": true
