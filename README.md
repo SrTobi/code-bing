@@ -21,6 +21,14 @@ You can change the search engine in your settings by setting the `codebing.defau
 	"codebing.defaultProvider": "b"
 ```
 
+
+## Install CodeBing
+
+Use VS Code's extension installer by pressing __F1__ and searching for `Extensions: Install Extensions`.
+In the next input box enter `code-bing` and wait for the installer to find CodeBing. Hit Enter to install.
+
+![Installation](/images/install.png)
+
 ## Other setting
 
 You can define the list of search providers and their shortcuts in the `codebing.searchProviders` option.
