@@ -22,28 +22,33 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// Get the active editor
 		let editor = vscode.window.activeTextEditor;
-		let text = "";
+		let selectedText = "";
 		if (editor) {
 			// Get the selected text
 			let selection = editor.selection;
-			text = editor.document.getText(selection);
+			selectedText = editor.document.getText(selection);
 		}
-		
-
+		// Get config settings
 		let config = vscode.workspace.getConfiguration("codebing");
-		if (!utils.isNullOrEmpty(text) && config.get<boolean>("noInputBoxIfTextSelected")) {
-			searchFor(text);
+		let useDefaultOnly = config.get<boolean>("useDefaultProviderOnly")
+		let useDefaultForSelection = config.get<boolean>("alwaysUseDefaultForSelection")
+		let skipInputForSelection = config.get<boolean>("noInputBoxIfTextSelected")
+
+		if (!utils.isNullOrEmpty(selectedText) && skipInputForSelection) {
+			searchFor(selectedText, true);
 		} else {
-			// Show an input box where the user can enter the text he want to search for
+			if (!utils.isNullOrEmpty(selectedText) && useDefaultForSelection) {
+				useDefaultOnly = true
+			}
 			// In order to do so, setup some options. 
 			let options: vscode.InputBoxOptions = {
 				prompt: "Enter provider code followed by query",	// <- The text to display underneath the input box. 
-				value: text,								// <- The value to prefill in the input box. Here we use the selected text.
-				placeHolder: "Query"						// <- An optional string to show as place holder in the input box to guide the user what to type.
+				value: selectedText,								// <- The value to prefill in the input box. Here we use the selected text.
+				placeHolder: "Query"								// <- An optional string to show as place holder in the input box to guide the user what to type.
 			}
-			
-			// Open the input box. If the user hits enter, 'searchfor' is invoked.
-			vscode.window.showInputBox(options).then(searchFor);
+			vscode.window.showInputBox(options).then((q) =>
+				searchFor(q, (useDefaultOnly || utils.startsWith(q, selectedText)))
+			);
 		}
 	});
 	context.subscriptions.push(disposable);
@@ -56,11 +61,10 @@ export function activate(context: vscode.ExtensionContext) {
 // Returns the url of the search provider with the query.
 //
 // @return the search url with query
-function getSearchUrl(query: string) {
+function getSearchUrl(query: string, useDefault = false) {
 	// Get config stuff
 	let config = vscode.workspace.getConfiguration("codebing");
 	let searchProviders = config.get("searchProviders") as { [id: string]: string; };
-	let useDefaultOnly = config.get<boolean>("useDefaultProviderOnly");
 	let defaultProvider = config.get<string>("defaultProvider");
 	let providerID = query.split(' ', 1)[0];
 	
@@ -75,7 +79,7 @@ function getSearchUrl(query: string) {
 	let selectedProvider = "";
 	let isDefault = false;
 	// Return default only if specified in config.
-	if (useDefaultOnly) {
+	if (useDefault) {
 		isDefault = true;
 	} else { // If not then try to resolve ID
 		let searchProvider = searchProviders[providerID];
@@ -85,7 +89,7 @@ function getSearchUrl(query: string) {
 			isDefault = true;
 		}
 	}
-	
+
 	if (isDefault) {
 		// if default resolve defaultProvider
 		selectedProvider = searchProviders[defaultProvider]
@@ -93,11 +97,11 @@ function getSearchUrl(query: string) {
 			selectedProvider = defaultProvider;
 		}
 	}
-	
+
 	if (!isValidProviderUrl(selectedProvider, false)) {
 		showConfigWarning("Selected provider is not valid: '" + selectedProvider + "'");
 	}
-	
+
 	let searchUrl = selectedProvider;
 	let q = "";
 	if (!isDefault) {
@@ -111,11 +115,11 @@ function getSearchUrl(query: string) {
 	return searchUrl;
 }
 
-function searchFor(query: string) {
+function searchFor(query: string, useDefault = false) {
 	if (!query) {
 		return;
 	}
-	open(getSearchUrl(query));
+	open(getSearchUrl(query, useDefault));
 }
 
 // Validate config to ensure all urls work etc.

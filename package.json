@@ -62,6 +62,12 @@
           "type": "boolean",
           "description": "If this is 'true' no input box will appear if selected text is searched.",
           "default": false
+        },
+        "codebing.alwaysUseDefaultForSelection": {
+          "title": "Always use default provider for selection search",
+          "type": "boolean",
+          "description": "If this is 'true' only the default provider will be used for selection-based searches.",
+          "default": false
         }
       }
     },
