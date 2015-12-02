@@ -28,11 +28,11 @@ export function activate(context: vscode.ExtensionContext) {
 			let selection = editor.selection;
 			text = editor.document.getText(selection);
 		}
-		
+
 
 		let config = vscode.workspace.getConfiguration("codebing");
 		if (!utils.isNullOrEmpty(text) && config.get<boolean>("noInputBoxIfTextSelected")) {
-			searchFor(text);
+			searchFor(text, true);
 		} else {
 			// Show an input box where the user can enter the text he want to search for
 			// In order to do so, setup some options. 
@@ -56,11 +56,11 @@ export function activate(context: vscode.ExtensionContext) {
 // Returns the url of the search provider with the query.
 //
 // @return the search url with query
-function getSearchUrl(query: string) {
+function getSearchUrl(query: string, forceDefault = false) {
 	// Get config stuff
 	let config = vscode.workspace.getConfiguration("codebing");
 	let searchProviders = config.get("searchProviders") as { [id: string]: string; };
-	let useDefaultOnly = config.get<boolean>("useDefaultProviderOnly");
+	let useDefaultOnly = forceDefault || config.get<boolean>("useDefaultProviderOnly")
 	let defaultProvider = config.get<string>("defaultProvider");
 	let providerID = query.split(' ', 1)[0];
 	
@@ -85,7 +85,7 @@ function getSearchUrl(query: string) {
 			isDefault = true;
 		}
 	}
-	
+
 	if (isDefault) {
 		// if default resolve defaultProvider
 		selectedProvider = searchProviders[defaultProvider]
@@ -93,11 +93,11 @@ function getSearchUrl(query: string) {
 			selectedProvider = defaultProvider;
 		}
 	}
-	
+
 	if (!isValidProviderUrl(selectedProvider, false)) {
 		showConfigWarning("Selected provider is not valid: '" + selectedProvider + "'");
 	}
-	
+
 	let searchUrl = selectedProvider;
 	let q = "";
 	if (!isDefault) {
@@ -111,11 +111,11 @@ function getSearchUrl(query: string) {
 	return searchUrl;
 }
 
-function searchFor(query: string) {
+function searchFor(query: string, forceDefault = false) {
 	if (!query) {
 		return;
 	}
-	open(getSearchUrl(query));
+	open(getSearchUrl(query, forceDefault));
 }
 
 // Validate config to ensure all urls work etc.
