@@ -29,13 +29,17 @@ export function activate(context: vscode.ExtensionContext) {
 			text = editor.document.getText(selection);
 		}
 
-
+		// Get config settings
 		let config = vscode.workspace.getConfiguration("codebing");
-		if (!utils.isNullOrEmpty(text) && config.get<boolean>("noInputBoxIfTextSelected")) {
+		let useDefaultOnly = config.get<boolean>("useDefaultProviderOnly")
+		let useDefaultForSelection = config.get<boolean>("alwaysUseDefaultForSelection")
+		let skipInputForSelection = config.get<boolean>("noInputBoxIfTextSelected")
+
+		if (!utils.isNullOrEmpty(text) && skipInputForSelection) {
 			searchDefaultFor(text);
 		} else {
 			let searchFunc = searchFor
-			if (!utils.isNullOrEmpty(text) && config.get<boolean>("alwaysUseDefaultForSelection")) {
+			if (useDefaultOnly || (!utils.isNullOrEmpty(text) && useDefaultForSelection)) {
 				searchFunc = searchDefaultFor;
 			}
 			// In order to do so, setup some options. 
@@ -57,11 +61,10 @@ export function activate(context: vscode.ExtensionContext) {
 // Returns the url of the search provider with the query.
 //
 // @return the search url with query
-function getSearchUrl(query: string, forceDefault = false) {
+function getSearchUrl(query: string, useDefault = false) {
 	// Get config stuff
 	let config = vscode.workspace.getConfiguration("codebing");
 	let searchProviders = config.get("searchProviders") as { [id: string]: string; };
-	let useDefaultOnly = forceDefault || config.get<boolean>("useDefaultProviderOnly")
 	let defaultProvider = config.get<string>("defaultProvider");
 	let providerID = query.split(' ', 1)[0];
 	
@@ -76,7 +79,7 @@ function getSearchUrl(query: string, forceDefault = false) {
 	let selectedProvider = "";
 	let isDefault = false;
 	// Return default only if specified in config.
-	if (useDefaultOnly) {
+	if (useDefault) {
 		isDefault = true;
 	} else { // If not then try to resolve ID
 		let searchProvider = searchProviders[providerID];
