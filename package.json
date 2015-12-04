@@ -74,7 +74,8 @@
     "keybindings": [
       {
         "command": "codebing.search",
-        "key": "ctrl+alt+F"
+        "key": "ctrl+alt+f",
+        "win": "shift+alt+f"
       }
     ]
   },
