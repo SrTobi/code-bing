@@ -14,6 +14,6 @@ export const depricatedKeys = {
 export const group = "codebing";
 
 // Creates a command string
-export function newCommandString(cmdName: string) {
+export function command(cmdName: string) {
 	return group + "." + cmdName;
 }

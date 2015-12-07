@@ -31,7 +31,7 @@ suite("Configuration Tests:", () => {
 			}
 		}
 	});
-	test("newCommandString properly formats string", function(){
-		assert.equal("codebing.search", cInfo.newCommandString("search"));
+	test("command() properly formats string", function(){
+		assert.equal("codebing.search", cInfo.command("search"));
 	});
 });
