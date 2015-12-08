@@ -23,7 +23,7 @@
     "commands": [
       {
         "command": "codebing.search",
-        "title": "Bing"
+        "title": "WebSearch"
       }
     ],
     "configuration": {
