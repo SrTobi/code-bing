@@ -10,7 +10,7 @@ import * as assert from 'assert';
 // as well as import your extension to test it
 import * as vscode from 'vscode';
 import * as myExtension from '../src/extension';
-import * as cInfo from '../src/configinfo'
+import * as cInfo from '../src/configinfo';
 // Defines a Mocha test suite to group tests of similar kind together
 /*
 suite("Extension Tests", () => {
@@ -27,11 +27,11 @@ suite("Configuration Tests:", () => {
 	test("configInfo.keys only contains valid config keys", function() {
 		for (let key in cInfo.keys) {
 			if (cInfo.keys.hasOwnProperty(key)) {
-				assert(config.has(key), "Invalid configInfo.key: " + key)
+				assert(config.has(key), "Invalid configInfo.key: " + key);
 			}
 		}
 	});
-	test("command() properly formats string", function(){
+	test("command() properly formats string", function() {
 		assert.equal("codebing.search", cInfo.command("search"));
 	});
 });
