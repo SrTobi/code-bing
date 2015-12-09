@@ -38,7 +38,7 @@
             "^\\S+$": {
               "title": "Key to search url mapping",
               "type:": "string",
-              "description": "A key mapping to a search url"
+              "description": "A key mapping to a search url. '{query}' is replaced with the search query."
             }
           },
           "default": {
