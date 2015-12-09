@@ -3,10 +3,10 @@
 
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
-import open = require('open');
-import * as utils from './utils';
-import * as cInfo from './configinfo';
+import * as vscode from "vscode";
+import open = require("open");
+import * as utils from "./utils";
+import * as cInfo from "./configinfo";
 let cKeys = cInfo.keys;
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -68,7 +68,7 @@ function getSearchUrl(query: string, useDefault = false) {
 	let config = vscode.workspace.getConfiguration(cInfo.group);
 	let searchProviders = config.get(cKeys.searchProviders) as { [id: string]: string; };
 	let defaultProvider = config.get<string>(cKeys.defaultProvider);
-	let providerID = query.split(' ', 1)[0];
+	let providerID = query.split(" ", 1)[0];
 	
 	// Backwards compatibility with old config format
 	let oldSearchProvider = config.get<string>(cInfo.depricatedKeys.searchprovider);
@@ -169,7 +169,7 @@ function showConfigWarning(warning: string) {
 	interface CmdItem extends vscode.MessageItem { cmd: string };
 	let openGlobalSettings: CmdItem = { title: "Open global settings", cmd: "workbench.action.openGlobalSettings" };
 	let openWorkspaceSettings: CmdItem = { title: "Open workspace settings", cmd: "workbench.action.openWorkspaceSettings" };
-	// Only show "Open workspace settings" if a folder is open
+	// Only show 'Open workspace settings' if a folder is open
 	(vscode.workspace.rootPath == undefined
 		? vscode.window.showWarningMessage(warning, openGlobalSettings)
 		: vscode.window.showWarningMessage(warning, openGlobalSettings, openWorkspaceSettings))
