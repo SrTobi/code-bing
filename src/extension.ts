@@ -3,13 +3,15 @@
 
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
-import open = require('open');
-import * as utils from './utils';
-
+import * as vscode from "vscode";
+import open = require("open");
+import * as utils from "./utils";
+import * as cInfo from "./configinfo";
+let cKeys = cInfo.keys;
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+
 	validateConfig();
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
@@ -17,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with  registerCommand
 	// The commandId parameter must match the command field in package.json
-	var disposable = vscode.commands.registerCommand('codebing.search', () => {
+	var disposable = vscode.commands.registerCommand(cInfo.command("search"), () => {
 		// The code you place here will be executed every time your command is executed
 
 		// Get the active editor
@@ -29,10 +31,10 @@ export function activate(context: vscode.ExtensionContext) {
 			selectedText = editor.document.getText(selection);
 		}
 		// Get config settings
-		let config = vscode.workspace.getConfiguration("codebing");
-		let useDefaultOnly = config.get<boolean>("useDefaultProviderOnly")
-		let useDefaultForSelection = config.get<boolean>("alwaysUseDefaultForSelection")
-		let skipInputForSelection = config.get<boolean>("noInputBoxIfTextSelected")
+		let config = vscode.workspace.getConfiguration(cInfo.group);
+		let useDefaultOnly = config.get<boolean>(cKeys.useDefaultProviderOnly)
+		let useDefaultForSelection = config.get<boolean>(cKeys.alwaysUseDefaultForSelection)
+		let skipInputForSelection = config.get<boolean>(cKeys.noInputBoxIfTextSelected)
 
 		if (!utils.isNullOrEmpty(selectedText) && skipInputForSelection) {
 			searchFor(selectedText, true);
@@ -63,13 +65,13 @@ export function activate(context: vscode.ExtensionContext) {
 // @return the search url with query
 function getSearchUrl(query: string, useDefault = false) {
 	// Get config stuff
-	let config = vscode.workspace.getConfiguration("codebing");
-	let searchProviders = config.get("searchProviders") as { [id: string]: string; };
-	let defaultProvider = config.get<string>("defaultProvider");
-	let providerID = query.split(' ', 1)[0];
+	let config = vscode.workspace.getConfiguration(cInfo.group);
+	let searchProviders = config.get(cKeys.searchProviders) as { [id: string]: string; };
+	let defaultProvider = config.get<string>(cKeys.defaultProvider);
+	let providerID = query.split(" ", 1)[0];
 	
 	// Backwards compatibility with old config format
-	let oldSearchProvider = config.get<string>("searchprovider");
+	let oldSearchProvider = config.get<string>(cInfo.depricatedKeys.searchprovider);
 	if (oldSearchProvider != null) {
 		defaultProvider = oldSearchProvider;
         showConfigWarning("codebing.searchprovider is depricated!")
@@ -124,9 +126,9 @@ function searchFor(query: string, useDefault = false) {
 
 // Validate config to ensure all urls work etc.
 function validateConfig() {
-	let config = vscode.workspace.getConfiguration("codebing");
-	let searchProviders = config.get("searchProviders") as { [id: string]: string; };
-	let defaultProvider = config.get<string>("defaultProvider");
+	let config = vscode.workspace.getConfiguration(cInfo.group);
+	let searchProviders = config.get(cKeys.searchProviders) as { [id: string]: string; };
+	let defaultProvider = config.get<string>(cKeys.defaultProvider);
 	let invalidProviders: Array<string> = [];
 
 	// Validate searchProviders
@@ -140,7 +142,7 @@ function validateConfig() {
 	// Validate defaultProvider
 	if (!isValidProviderUrl(defaultProvider, true)
 		&& !isValidProviderUrl(searchProviders[defaultProvider])) {
-		invalidProviders.push("defaultProvider: '" + defaultProvider + "'");
+		invalidProviders.push(cKeys.defaultProvider + ": '" + defaultProvider + "'");
 	}
 
 	if ((invalidProviders != null) && (invalidProviders.length > 0)) {
@@ -167,7 +169,7 @@ function showConfigWarning(warning: string) {
 	interface CmdItem extends vscode.MessageItem { cmd: string };
 	let openGlobalSettings: CmdItem = { title: "Open global settings", cmd: "workbench.action.openGlobalSettings" };
 	let openWorkspaceSettings: CmdItem = { title: "Open workspace settings", cmd: "workbench.action.openWorkspaceSettings" };
-	// Only show "Open workspace settings" if a folder is open
+	// Only show 'Open workspace settings' if a folder is open
 	(vscode.workspace.rootPath == undefined
 		? vscode.window.showWarningMessage(warning, openGlobalSettings)
 		: vscode.window.showWarningMessage(warning, openGlobalSettings, openWorkspaceSettings))

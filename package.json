@@ -23,7 +23,7 @@
     "commands": [
       {
         "command": "codebing.search",
-        "title": "Bing"
+        "title": "Bing: WebSearch"
       }
     ],
     "configuration": {
@@ -34,6 +34,13 @@
           "title": "Search providers",
           "type": "object",
           "description": "A dictionary with search engines, mapping a key to a search url. In the search url {query} is replaced with the user search. Use the key as first word in the search input to specify the search engine.",
+          "patternProperties": {
+            "^\\S+$": {
+              "title": "Key to search url mapping",
+              "type:": "string",
+              "description": "A key mapping to a search url. '{query}' is replaced with the search query."
+            }
+          },
           "default": {
             "b": "https://www.bing.com/search?q={query}",
             "g": "https://www.google.com/search?q={query}",
@@ -74,7 +81,8 @@
     "keybindings": [
       {
         "command": "codebing.search",
-        "key": "ctrl+alt+F"
+        "key": "ctrl+alt+f",
+        "win": "shift+alt+f"
       }
     ]
   },
