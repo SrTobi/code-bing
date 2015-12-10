@@ -45,7 +45,8 @@ __Note__ that setting this option will overwrite these defaults.
 	"wiki": "https://en.wikipedia.org/wiki/{query}",
 	"yt": "https://www.youtube.com/results?search_query={query}",
 	"twit": "https://twitter.com/search?q={query}",
-	"gh": "https://github.com/search?utf8=✓&q={query}"
+	"gh": "https://github.com/search?utf8=✓&q={query}",
+	"so": "https://stackoverflow.com/search?q={query}"
 }
 ```
 
