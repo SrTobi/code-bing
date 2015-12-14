@@ -2,7 +2,7 @@
   "name": "code-bing",
   "displayName": "CodeBing",
   "description": " Extension to search for selected text in the internet.",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "publisher": "SirTobi",
   "author": {
     "name": "Tobias Kahlert (a.k.a SirTobi)"
@@ -23,7 +23,7 @@
     "commands": [
       {
         "command": "codebing.search",
-        "title": "Bing"
+        "title": "Bing: WebSearch"
       }
     ],
     "configuration": {
@@ -34,6 +34,13 @@
           "title": "Search providers",
           "type": "object",
           "description": "A dictionary with search engines, mapping a key to a search url. In the search url {query} is replaced with the user search. Use the key as first word in the search input to specify the search engine.",
+          "patternProperties": {
+            "^\\S+$": {
+              "title": "Key to search url mapping",
+              "type:": "string",
+              "description": "A key mapping to a search url. '{query}' is replaced with the search query."
+            }
+          },
           "default": {
             "b": "https://www.bing.com/search?q={query}",
             "g": "https://www.google.com/search?q={query}",
@@ -42,7 +49,8 @@
             "wiki": "https://en.wikipedia.org/wiki/{query}",
             "yt": "https://www.youtube.com/results?search_query={query}",
             "twit": "https://twitter.com/search?q={query}",
-            "gh": "https://github.com/search?utf8=✓&q={query}"
+            "gh": "https://github.com/search?utf8=✓&q={query}",
+            "so": "https://stackoverflow.com/search?q={query}"
           }
         },
         "codebing.useDefaultProviderOnly": {
@@ -74,7 +82,8 @@
     "keybindings": [
       {
         "command": "codebing.search",
-        "key": "ctrl+alt+F"
+        "key": "ctrl+alt+f",
+        "win": "shift+alt+f"
       }
     ]
   },
