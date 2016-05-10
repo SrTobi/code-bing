@@ -47,7 +47,7 @@ __Note__ that setting this option will overwrite these defaults.
 	"twit": "https://twitter.com/search?q={query}",
 	"gh": "https://github.com/search?utf8=✓&q={query}",
 	"so": "https://stackoverflow.com/search?q={query}",
-        "php" : "http://php.net/manual-lookup.php?pattern={query}&scope=quickref",
+        "php" : "https://php.net/manual-lookup.php?pattern={query}&scope=quickref",
         "mdn": "https://developer.mozilla.org/en-US/search?q={query}&highlight=true",
         "py": "https://www.python.org/search/?q={query}"
 }
